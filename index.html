@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Tráfego Pago para Lojas de Veículos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #131316;
+    --bg-raised: #1b1c20;
+    --bg-raised-2: #222327;
+    --line: #35373d;
+    --line-soft: #2a2b30;
+    --ink: #f3f1ea;
+    --ink-muted: #9b9da3;
+    --ink-dim: #6d6f76;
+    --orange: #ff4e1f;
+    --orange-dim: #ff8a5c;
+    --blue: #00c2ff;
+    --yellow: #ffcc33;
+    --font-display: 'Big Shoulders Display', sans-serif;
+    --font-body: 'Archivo', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,78,31,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 110% 15%, rgba(0,194,255,0.08), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  img, svg{ display:block; max-width:100%; }
+
+  .wrap{ max-width: 1180px; margin:0 auto; padding:0 24px; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  ::selection{ background: var(--orange); color:#131316; }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-visible{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    *{ animation:none !important; }
+  }
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    position: sticky; top:0; z-index:50;
+    background: rgba(19,19,22,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .topbar-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 24px;
+  }
+  .brand{
+    font-family: var(--font-display);
+    font-weight:800; font-size: 22px; letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .brand-dot{ width:10px; height:10px; border-radius:50%; background: var(--orange); box-shadow:0 0 12px var(--orange); }
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding: 96px 0 120px;
+    background-image:
+      linear-gradient(rgba(243,241,234,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(243,241,234,0.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, transparent 55%, var(--bg) 100%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items:center;
+    position:relative; z-index:2;
+  }
+  .eyebrow{
+    font-family: var(--font-mono); font-size:12.5px; letter-spacing:0.16em; text-transform:uppercase;
+    color: var(--orange-dim); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .eyebrow::before{ content:""; width:28px; height:1px; background: var(--orange-dim); }
+  .hero h1{
+    font-family: var(--font-display); font-weight:900; text-transform:uppercase;
+    font-size: clamp(42px, 6.2vw, 78px);
+    line-height: 0.96; letter-spacing: 0.2px;
+  }
+  .hero h1 .line2{ color: var(--orange); }
+  .hero-sub{
+    margin-top:24px; font-size: 18px; color: var(--ink-muted); max-width: 520px;
+  }
+  .hero-stats{ display:flex; gap: 28px; margin-top:44px; flex-wrap:wrap; }
+  .hero-stat b{ font-family: var(--font-mono); font-size:26px; color:var(--ink); display:block; }
+  .hero-stat span{ font-size:12px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.06em; }
+
+  /* speedometer */
+  .gauge-wrap{ position:relative; display:flex; justify-content:center; align-items:center; }
+  .gauge-card{
+    background: linear-gradient(160deg, var(--bg-raised), var(--bg-raised-2));
+    border:1px solid var(--line); border-radius:10px; padding: 30px 24px 22px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+    width:100%; max-width: 380px;
+  }
+  .gauge-label{ font-family: var(--font-mono); font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.1em; text-align:center; margin-bottom:6px;}
+  .needle{ transform-origin: 150px 150px; transform: rotate(-90deg); animation: sweep 2.6s cubic-bezier(.2,.9,.25,1) forwards; }
+  @keyframes sweep{
+    0%{ transform: rotate(-90deg); }
+    60%{ transform: rotate(58deg); }
+    100%{ transform: rotate(38deg); }
+  }
+  .gauge-readout{ display:flex; justify-content:space-between; margin-top:14px; font-family: var(--font-mono); }
+  .gauge-readout div span{ display:block; font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.08em; }
+  .gauge-readout div b{ font-size: 20px; color: var(--blue); }
+
+  /* ---------- section shell ---------- */
+  section{ position:relative; padding: 90px 0; }
+  .section-head{ max-width: 640px; margin-bottom: 52px; }
+  .section-tag{
+    font-family: var(--font-mono); font-size:12px; color: var(--blue); text-transform:uppercase; letter-spacing:0.14em; margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-tag::before{ content:""; width:18px; height:1px; background:var(--blue); }
+  h2{
+    font-family: var(--font-display); font-weight:800; text-transform:uppercase;
+    font-size: clamp(30px, 4vw, 44px); line-height:1.02;
+  }
+  .section-desc{ margin-top:16px; color: var(--ink-muted); font-size:16.5px; }
+
+  /* ---------- problema ---------- */
+  .problema{ background: var(--bg-raised); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .problema-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+  .problema-card{
+    background: var(--bg); border:1px solid var(--line); border-radius:8px; padding: 26px 24px;
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .problema-card:hover{ transform: translateY(-4px); border-color: var(--orange-dim); }
+  .problema-card .ic{ font-size:26px; margin-bottom:16px; }
+  .problema-card h3{ font-family:var(--font-display); font-size:22px; text-transform:uppercase; font-weight:700; margin-bottom:8px; }
+  .problema-card p{ color: var(--ink-muted); font-size:15px; }
+
+  /* ---------- solucao ---------- */
+  .solucao-grid{ display:grid; grid-template-columns: 0.9fr 1.1fr; gap:56px; align-items:start; }
+  .solucao-visual{
+    background: linear-gradient(160deg, var(--bg-raised), var(--bg-raised-2));
+    border:1px solid var(--line); border-radius:10px; padding:28px;
+    position:relative; overflow:hidden;
+  }
+  .solucao-visual::before{
+    content:"ROI"; position:absolute; right:-10px; bottom:-30px; font-family:var(--font-display); font-weight:900;
+    font-size:140px; color: rgba(255,78,31,0.06); line-height:1;
+  }
+  .funnel-row{ display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px dashed var(--line); }
+  .funnel-row:last-child{ border-bottom:none; }
+  .funnel-row .fn-label{ font-size:14px; color: var(--ink-muted); }
+  .funnel-row .fn-value{ font-family:var(--font-mono); font-weight:700; color:var(--ink); }
+  .funnel-bar{ height:6px; border-radius:4px; background: var(--line-soft); margin-top:8px; overflow:hidden; }
+  .funnel-bar i{ display:block; height:100%; background: linear-gradient(90deg, var(--orange), var(--blue)); border-radius:4px; }
+
+  .checklist{ margin-top: 6px; }
+  .checklist li{ list-style:none; display:flex; gap:14px; padding: 16px 0; border-bottom:1px solid var(--line-soft); }
+  .checklist li:last-child{ border-bottom:none; }
+  .check-badge{
+    flex-shrink:0; width:30px; height:30px; border-radius:50%; background: rgba(255,78,31,0.12); color: var(--orange);
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-family:var(--font-mono); font-size:13px;
+  }
+  .checklist h4{ font-size:16.5px; font-weight:700; margin-bottom:4px; }
+  .checklist p{ color:var(--ink-muted); font-size:14.5px; }
+
+  /* ---------- incluso tags ---------- */
+  .incluso{ background: var(--bg); }
+  .incluso-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:16px; }
+  .incluso-item{
+    background: var(--bg-raised); border:1px solid var(--line); border-radius:8px; padding:22px 16px; text-align:center;
+    transition: border-color .25s ease, transform .25s ease;
+  }
+  .incluso-item:hover{ border-color: var(--blue); transform: translateY(-3px); }
+  .incluso-item .ic{ font-size:24px; margin-bottom:10px; }
+  .incluso-item span{ font-size:13.5px; color: var(--ink-muted); font-weight:500; }
+
+  /* ---------- pacotes / window stickers ---------- */
+  .pacotes{ background: var(--bg-raised); border-top:1px solid var(--line-soft); }
+  .pacotes-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:26px; align-items:start; }
+
+  .sticker{
+    background: #fbf9f3;
+    color: #17181b;
+    border-radius: 4px;
+    position:relative;
+    padding: 0;
+    font-family: var(--font-mono);
+    box-shadow: 0 22px 50px rgba(0,0,0,0.4);
+    transform: rotate(-1.2deg);
+    transition: transform .3s ease, box-shadow .3s ease;
+    border: 1px solid #d9d5c7;
+  }
+  .pacotes-grid > .sticker:nth-child(2){ transform: rotate(0.6deg) translateY(-14px); }
+  .pacotes-grid > .sticker:nth-child(3){ transform: rotate(-0.8deg); }
+  .sticker:hover{ transform: rotate(0deg) translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+
+  .sticker-head{
+    background: #17181b; color:#fbf9f3; text-align:center; padding: 10px 12px;
+    font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700;
+    border-bottom: 2px dashed #ff4e1f;
+  }
+  .sticker.featured .sticker-head{ background: var(--orange); color:#17181b; border-bottom-color:#17181b; }
+  .sticker-body{ padding: 22px 22px 20px; }
+  .sticker-verba{ font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#6b6c63; }
+  .sticker-price{ font-family: var(--font-display); font-size:44px; font-weight:900; line-height:1; margin:8px 0 2px; }
+  .sticker-price span{ font-family:var(--font-mono); font-size:14px; font-weight:700; color:#6b6c63; }
+  .sticker-divider{ border-top: 1px dashed #c9c5b7; margin: 14px 0; }
+  .sticker-feat{ list-style:none; font-size:13.5px; padding:5px 0; display:flex; gap:8px; }
+  .sticker-feat::before{ content:"▸"; color:#ff4e1f; font-weight:700; }
+  .sticker-barcode{
+    height:34px; margin-top:16px;
+    background: repeating-linear-gradient(90deg, #17181b 0 2px, transparent 2px 4px, #17181b 4px 5px, transparent 5px 9px);
+    opacity:0.85;
+  }
+  .sticker-foot{ text-align:center; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:#8b8c82; padding: 8px 0 14px;}
+  .badge-top{
+    position:absolute; top:-14px; right:14px; background: var(--blue); color:#111;
+    font-size:10.5px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase;
+    padding:6px 12px; border-radius:20px; box-shadow:0 6px 16px rgba(0,194,255,0.35);
+  }
+
+  /* ---------- prova social ---------- */
+  .prova-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:22px; }
+  .depo{
+    background: var(--bg-raised); border:1px solid var(--line); border-radius:8px; padding:26px;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .stars{ color: var(--yellow); font-size:14px; letter-spacing:2px; }
+  .depo p{ font-size:15px; color: var(--ink); }
+  .depo footer{ display:flex; align-items:center; gap:10px; margin-top:auto; }
+  .avatar{
+    width:38px; height:38px; border-radius:50%; background: linear-gradient(135deg, var(--orange), var(--blue));
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:800; font-size:15px; color:#131316;
+  }
+  .depo-name{ font-size:13.5px; font-weight:700; }
+  .depo-role{ font-size:12px; color:var(--ink-dim); }
+
+  /* ---------- garantias ---------- */
+  .garantias{ background: var(--bg-raised); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .garantias-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:20px; }
+  .garantia-item{ text-align:left; }
+  .garantia-num{ font-family: var(--font-mono); font-size:12px; color: var(--orange-dim); margin-bottom:10px; }
+  .garantia-item h4{ font-size:17px; font-weight:700; margin-bottom:8px; }
+  .garantia-item p{ font-size:14px; color:var(--ink-muted); }
+
+  /* ---------- cta final ---------- */
+  .cta-final{
+    text-align:center; padding: 110px 0;
+    background:
+      radial-gradient(ellipse 700px 400px at 50% 0%, rgba(255,78,31,0.16), transparent 65%),
+      var(--bg);
+  }
+  .cta-final h2{ font-size: clamp(32px, 5vw, 56px); }
+  .cta-final p{ color: var(--ink-muted); max-width:560px; margin: 18px auto 36px; font-size:17px; }
+
+  /* ---------- FAQ ---------- */
+  .faq-item{ border-bottom: 1px solid var(--line-soft); }
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; color:var(--ink); cursor:pointer;
+    padding: 22px 0; font-size:17px; font-weight:600; display:flex; justify-content:space-between; align-items:center; gap:20px;
+    font-family: var(--font-body);
+  }
+  .faq-q .plus{ font-family:var(--font-mono); color: var(--orange); font-size:20px; transition: transform .25s ease; flex-shrink:0; }
+  .faq-item.open .faq-q .plus{ transform: rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition: max-height .35s ease; }
+  .faq-a p{ padding-bottom:22px; color:var(--ink-muted); font-size:15px; max-width:640px; }
+  .faq-item.open .faq-a{ max-height:220px; }
+
+  /* ---------- footer ---------- */
+  footer.site-foot{ padding: 40px 0; border-top:1px solid var(--line-soft); }
+  .foot-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .foot-inner small{ color: var(--ink-dim); font-size:12.5px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 940px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .gauge-wrap{ margin-top:20px; }
+    .problema-grid, .incluso-grid, .pacotes-grid, .prova-grid, .garantias-grid{ grid-template-columns: repeat(2,1fr); }
+    .solucao-grid{ grid-template-columns:1fr; }
+    .pacotes-grid > .sticker:nth-child(2){ transform: rotate(0.6deg); }
+  }
+  @media (max-width: 620px){
+    .problema-grid, .incluso-grid, .pacotes-grid, .prova-grid, .garantias-grid{ grid-template-columns: 1fr; }
+    .hero-stats{ gap:20px; }
+  }
+
+  button:focus-visible, a:focus-visible{ outline: 2px solid var(--blue); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand"><span class="brand-dot"></span>NEW CLICK MARKETING</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Gestão de tráfego pago · setor automotivo</div>
+      <h1>MAIS TEST DRIVE.<br><span class="line2">MAIS VENDA.</span></h1>
+      <p class="hero-sub">Gestão completa de anúncios no Meta Ads (Instagram e Facebook) feita sob medida para lojas de veículos — o foco não é curtida, é lead qualificado no seu WhatsApp e agenda de test drive cheia. 🚗</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>Diário</b><span>Monitoramento e ajuste</span></div>
+        <div class="hero-stat"><b>Semanal</b><span>Relatório de performance</span></div>
+        <div class="hero-stat"><b>100%</b><span>Foco no setor automotivo</span></div>
+      </div>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-card">
+        <div class="gauge-label">Painel de performance</div>
+        <svg viewBox="0 0 300 170" width="100%">
+          <path d="M20,150 A130,130 0 0,1 280,150" fill="none" stroke="#35373d" stroke-width="14" stroke-linecap="round"/>
+          <path d="M20,150 A130,130 0 0,1 150,20" fill="none" stroke="#ff4e1f" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+          <path d="M150,20 A130,130 0 0,1 280,150" fill="none" stroke="#00c2ff" stroke-width="14" stroke-linecap="round" opacity="0.55"/>
+          <g class="needle">
+            <line x1="150" y1="150" x2="150" y2="35" stroke="#f3f1ea" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <circle cx="150" cy="150" r="10" fill="#f3f1ea"/>
+        </svg>
+        <div class="gauge-readout">
+          <div><span>Leads</span><b>↑</b></div>
+          <div style="text-align:center"><span>CPL</span><b>↓</b></div>
+          <div style="text-align:right"><span>Test drive</span><b>↑</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">O problema</div>
+      <h2>Anúncio rodando, verba saindo. E o showroom continua vazio.</h2>
+      <p class="section-desc">Se você já investiu em Meta Ads e não viu o retorno esperado, o problema raramente é "o Facebook não funciona" — é onde exatamente o dinheiro está vazando.</p>
+    </div>
+    <div class="problema-grid">
+      <div class="problema-card reveal">
+        <div class="ic">📉</div>
+        <h3>Verba sem direção</h3>
+        <p>Campanha configurada de forma genérica, sem público qualificado para quem realmente compra carro na sua região.</p>
+      </div>
+      <div class="problema-card reveal">
+        <div class="ic">💬</div>
+        <h3>Lead frio, não comprador</h3>
+        <p>Muita curtida e comentário, pouco contato real no WhatsApp pronto para agendar um test drive.</p>
+      </div>
+      <div class="problema-card reveal">
+        <div class="ic">📊</div>
+        <h3>Zero visibilidade</h3>
+        <p>Sem relatório, sem clareza de CPL, sem saber se o mês foi bom ou se o dinheiro simplesmente evaporou.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section id="solucao">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">A solução</div>
+      <h2>Gestão de tráfego feita só para o setor automotivo.</h2>
+      <p class="section-desc">Não é uma agência genérica aplicando o mesmo manual pra qualquer nicho. É gestão pensada para o funil real de uma loja: do clique ao test drive.</p>
+    </div>
+    <div class="solucao-grid">
+      <div class="solucao-visual reveal">
+        <div class="funnel-row">
+          <div><div class="fn-label">Alcance qualificado</div><div class="funnel-bar"><i style="width:92%"></i></div></div>
+          <div class="fn-value">92%</div>
+        </div>
+        <div class="funnel-row">
+          <div><div class="fn-label">Contato no WhatsApp</div><div class="funnel-bar"><i style="width:68%"></i></div></div>
+          <div class="fn-value">68%</div>
+        </div>
+        <div class="funnel-row">
+          <div><div class="fn-label">Agendamento de test drive</div><div class="funnel-bar"><i style="width:41%"></i></div></div>
+          <div class="fn-value">41%</div>
+        </div>
+        <div class="funnel-row">
+          <div><div class="fn-label">Venda</div><div class="funnel-bar"><i style="width:22%"></i></div></div>
+          <div class="fn-value">22%</div>
+        </div>
+      </div>
+      <ul class="checklist">
+        <li class="reveal">
+          <div class="check-badge">✓</div>
+          <div><h4>Configuração e otimização no Meta Ads</h4><p>Estrutura de campanha, pixel e otimização contínua para gerar resultado, não só entrega.</p></div>
+        </li>
+        <li class="reveal">
+          <div class="check-badge">✓</div>
+          <div><h4>Público qualificado de verdade</h4><p>Segmentação pensada para quem está perto de decidir a troca do carro — não curiosos.</p></div>
+        </li>
+        <li class="reveal">
+          <div class="check-badge">✓</div>
+          <div><h4>Criativos testados</h4><p>Testes de criativo em ciclo contínuo, cortando o que não performa e escalando o que gera lead.</p></div>
+        </li>
+        <li class="reveal">
+          <div class="check-badge">✓</div>
+          <div><h4>Monitoramento diário + relatório semanal</h4><p>Você acompanha CPL, leads e agendamentos toda semana, sem depender de achismo.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- O QUE ESTÁ INCLUSO -->
+<section class="incluso">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">O que está incluso</div>
+      <h2>Tudo que a gestão cobre, mês a mês.</h2>
+    </div>
+    <div class="incluso-grid">
+      <div class="incluso-item reveal"><div class="ic">⚙️</div><span>Configuração e otimização de campanhas Meta Ads</span></div>
+      <div class="incluso-item reveal"><div class="ic">🎯</div><span>Definição de público-alvo qualificado</span></div>
+      <div class="incluso-item reveal"><div class="ic">🎬</div><span>Criação e teste de criativos</span></div>
+      <div class="incluso-item reveal"><div class="ic">📈</div><span>Monitoramento diário + ajustes</span></div>
+      <div class="incluso-item reveal"><div class="ic">🗓️</div><span>Relatórios semanais de performance</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PACOTES -->
+<section class="pacotes" id="pacotes">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">Pacotes de investimento</div>
+      <h2>Escolha o pacote pelo tamanho da sua verba de mídia.</h2>
+      <p class="section-desc">O valor do serviço varia conforme o investimento mensal em anúncios — quanto maior a verba, mais entregas fazem sentido dentro do pacote.</p>
+    </div>
+
+    <div class="pacotes-grid">
+      <div class="sticker reveal">
+        <div class="sticker-head">Pacote essencial</div>
+        <div class="sticker-body">
+          <div class="sticker-verba">Verba em anúncios: R$ 1.000 – R$ 2.500/mês</div>
+          <div class="sticker-price">R$ 800<span>/mês, a partir de</span></div>
+          <div class="sticker-divider"></div>
+          <div class="sticker-feat">Configuração e otimização Meta Ads</div>
+          <div class="sticker-feat">Público qualificado</div>
+          <div class="sticker-feat">Criativos + testes</div>
+          <div class="sticker-feat">Relatório semanal</div>
+          <div class="sticker-barcode"></div>
+        </div>
+        <div class="sticker-foot">Gestão de tráfego · New Click</div>
+      </div>
+
+      <div class="sticker featured reveal">
+        <span class="badge-top">Mais escolhido</span>
+        <div class="sticker-head">Pacote crescimento</div>
+        <div class="sticker-body">
+          <div class="sticker-verba">Verba em anúncios: a partir de R$ 1.500/mês</div>
+          <div class="sticker-price">R$ 1.000–1.200<span>/mês</span></div>
+          <div class="sticker-divider"></div>
+          <div class="sticker-feat">Tudo do pacote essencial</div>
+          <div class="sticker-feat">Treinamento de vendas</div>
+          <div class="sticker-feat">Landing page própria</div>
+          <div class="sticker-feat">Criativos exclusivos</div>
+          <div class="sticker-barcode"></div>
+        </div>
+        <div class="sticker-foot">Gestão de tráfego · New Click</div>
+      </div>
+
+      <div class="sticker reveal">
+        <div class="sticker-head">Pacote performance</div>
+        <div class="sticker-body">
+          <div class="sticker-verba">Verba em anúncios: a partir de R$ 2.000/mês</div>
+          <div class="sticker-price">R$ 1.200<span>/mês</span></div>
+          <div class="sticker-divider"></div>
+          <div class="sticker-feat">Tudo do pacote essencial</div>
+          <div class="sticker-feat">Acompanhamento da equipe de vendas</div>
+          <div class="sticker-feat">Rotina de gestão comercial</div>
+          <div class="sticker-feat">Prioridade nos ajustes diários</div>
+          <div class="sticker-barcode"></div>
+        </div>
+        <div class="sticker-foot">Gestão de tráfego · New Click</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">Prova social</div>
+      <h2>Lojas que pararam de queimar verba no escuro.</h2>
+    </div>
+    <div class="prova-grid">
+      <div class="depo reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Antes eu só via a verba saindo sem saber o motivo. Depois da gestão, passei a ter agenda de test drive toda semana."</p>
+        <footer><div class="avatar">R</div><div><div class="depo-name">Gerente comercial</div><div class="depo-role">Loja de seminovos</div></div></footer>
+      </div>
+      <div class="depo reveal">
+        <div class="stars">★★★★★</div>
+        <p>"O relatório semanal mudou a forma como eu enxergo o investimento em anúncio. Hoje eu sei exatamente onde o dinheiro está indo."</p>
+        <footer><div class="avatar">M</div><div><div class="depo-name">Proprietário</div><div class="depo-role">Concessionária multimarcas</div></div></footer>
+      </div>
+      <div class="depo reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Os criativos novos trouxeram um tipo de lead bem mais próximo de fechar negócio, não só curiosos comentando no post."</p>
+        <footer><div class="avatar">C</div><div><div class="depo-name">Coordenador de vendas</div><div class="depo-role">Loja de veículos</div></div></footer>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GARANTIAS -->
+<section class="garantias">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">O que você pode esperar</div>
+      <h2>Processo transparente, do primeiro dia em diante.</h2>
+    </div>
+    <div class="garantias-grid">
+      <div class="garantia-item reveal">
+        <div class="garantia-num">/ 01</div>
+        <h4>Diagnóstico inicial</h4>
+        <p>Análise da conta, do público e do histórico antes de qualquer ajuste.</p>
+      </div>
+      <div class="garantia-item reveal">
+        <div class="garantia-num">/ 02</div>
+        <h4>Ajuste contínuo</h4>
+        <p>Monitoramento diário para cortar o que não performa e escalar o que gera lead.</p>
+      </div>
+      <div class="garantia-item reveal">
+        <div class="garantia-num">/ 03</div>
+        <h4>Relatório sem enrolação</h4>
+        <p>Toda semana, números claros de CPL, leads e agendamentos — sem juridiquês nem enfeite.</p>
+      </div>
+      <div class="garantia-item reveal">
+        <div class="garantia-num">/ 04</div>
+        <h4>Comunicação direta</h4>
+        <p>Canal direto pra dúvidas e ajustes de rota, sem depender de ticket ou fila de suporte.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FECHAMENTO -->
+<section class="cta-final" id="contato">
+  <div class="wrap reveal">
+    <div class="eyebrow" style="justify-content:center">Resumo da proposta</div>
+    <h2>Gestão feita pra encher<br>a agenda de test drive.</h2>
+    <p>Configuração e otimização de campanhas, público qualificado, criativos testados e relatório semanal — tudo pensado para o funil real de uma loja de veículos. 🔧</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="wrap" style="max-width:820px;">
+    <div class="section-head reveal">
+      <div class="section-tag">Perguntas frequentes</div>
+      <h2>Antes de fechar, tira suas dúvidas.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-q">A verba de anúncio está incluída no valor do serviço? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Não. O valor do pacote é referente à gestão. A verba de mídia (o que é investido diretamente no Meta Ads) é paga à parte, direto na plataforma.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Em quanto tempo aparecem os primeiros resultados? <span class="plus">+</span></button>
+        <div class="faq-a"><p>As primeiras otimizações e leads costumam aparecer já nas primeiras semanas, mas o funil se estabiliza com mais consistência a partir do segundo mês, com histórico de dados acumulado.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Preciso ter uma equipe de vendas estruturada? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Não é obrigatório, mas ajuda bastante. Nos pacotes com treinamento e acompanhamento de equipe, trabalhamos junto pra que o lead gerado seja bem atendido até o test drive.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Existe fidelidade ou contrato de longo prazo? <span class="plus">+</span></button>
+        <div class="faq-a"><p>O funcionamento e as condições de permanência são combinados diretamente na conversa inicial, conforme o pacote escolhido.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q">Funciona para qualquer tipo de loja de veículos? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Funciona para lojas de seminovos, concessionárias multimarcas e desmanches/peças — a estratégia de público e criativo é ajustada para o seu tipo de operação.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-foot">
+  <div class="wrap foot-inner">
+    <div class="brand" style="font-size:16px;"><span class="brand-dot"></span>NEW CLICK MARKETING</div>
+    <small>Gestão de tráfego pago para o setor automotivo · Proposta comercial</small>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
