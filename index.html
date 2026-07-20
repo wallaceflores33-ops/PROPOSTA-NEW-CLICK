@@ -189,7 +189,7 @@
 
   /* ---------- incluso tags ---------- */
   .incluso{ background: var(--bg); }
-  .incluso-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:16px; }
+  .incluso-grid{ display:grid; grid-template-columns: repeat(6, 1fr); gap:16px; }
   .incluso-item{
     background: var(--bg-raised); border:1px solid var(--line); border-radius:8px; padding:22px 16px; text-align:center;
     transition: border-color .25s ease, transform .25s ease;
@@ -200,7 +200,7 @@
 
   /* ---------- pacotes / window stickers ---------- */
   .pacotes{ background: var(--bg-raised); border-top:1px solid var(--line-soft); }
-  .pacotes-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:26px; align-items:start; }
+  .pacotes-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:22px; align-items:start; }
 
   .sticker{
     background: #fbf9f3;
@@ -214,8 +214,9 @@
     transition: transform .3s ease, box-shadow .3s ease;
     border: 1px solid #d9d5c7;
   }
-  .pacotes-grid > .sticker:nth-child(2){ transform: rotate(0.6deg) translateY(-14px); }
-  .pacotes-grid > .sticker:nth-child(3){ transform: rotate(-0.8deg); }
+  .pacotes-grid > .sticker:nth-child(2){ transform: rotate(0.6deg) translateY(-10px); }
+  .pacotes-grid > .sticker:nth-child(3){ transform: rotate(-0.8deg) translateY(6px); }
+  .pacotes-grid > .sticker:nth-child(4){ transform: rotate(0.9deg) translateY(-6px); }
   .sticker:hover{ transform: rotate(0deg) translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
 
   .sticker-head{
@@ -225,8 +226,9 @@
   }
   .sticker.featured .sticker-head{ background: var(--orange); color:#17181b; border-bottom-color:#17181b; }
   .sticker-body{ padding: 22px 22px 20px; }
-  .sticker-verba{ font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#6b6c63; }
-  .sticker-price{ font-family: var(--font-display); font-size:44px; font-weight:900; line-height:1; margin:8px 0 2px; }
+  .sticker-verba-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.09em; color:#8b8c82; }
+  .sticker-verba-value{ font-size:16px; font-weight:700; color:#17181b; margin-top:5px; letter-spacing:0; }
+  .sticker-price{ font-family: var(--font-display); font-size:36px; font-weight:900; line-height:1; margin:8px 0 2px; }
   .sticker-price span{ font-family:var(--font-mono); font-size:14px; font-weight:700; color:#6b6c63; }
   .sticker-divider{ border-top: 1px dashed #c9c5b7; margin: 14px 0; }
   .sticker-feat{ list-style:none; font-size:13.5px; padding:5px 0; display:flex; gap:8px; }
@@ -440,11 +442,12 @@
       <h2>Tudo que a gestão cobre, mês a mês.</h2>
     </div>
     <div class="incluso-grid">
-      <div class="incluso-item reveal"><div class="ic">⚙️</div><span>Configuração e otimização de campanhas Meta Ads</span></div>
-      <div class="incluso-item reveal"><div class="ic">🎯</div><span>Definição de público-alvo qualificado</span></div>
-      <div class="incluso-item reveal"><div class="ic">🎬</div><span>Criação e teste de criativos</span></div>
-      <div class="incluso-item reveal"><div class="ic">📈</div><span>Monitoramento diário + ajustes</span></div>
-      <div class="incluso-item reveal"><div class="ic">🗓️</div><span>Relatórios semanais de performance</span></div>
+      <div class="incluso-item reveal"><div class="ic">⚙️</div><span>Configuração completa de campanhas Meta Ads</span></div>
+      <div class="incluso-item reveal"><div class="ic">🔍</div><span>Pesquisa de público</span></div>
+      <div class="incluso-item reveal"><div class="ic">🎬</div><span>Criação de criativos</span></div>
+      <div class="incluso-item reveal"><div class="ic">🔁</div><span>Otimização contínua</span></div>
+      <div class="incluso-item reveal"><div class="ic">📈</div><span>Monitoramento diário</span></div>
+      <div class="incluso-item reveal"><div class="ic">🗓️</div><span>Relatórios semanais</span></div>
     </div>
   </div>
 </section>
@@ -453,22 +456,35 @@
 <section class="pacotes" id="pacotes">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="section-tag">Pacotes de investimento</div>
-      <h2>Escolha o pacote pelo tamanho da sua verba de mídia.</h2>
-      <p class="section-desc">O valor do serviço varia conforme o investimento mensal em anúncios — quanto maior a verba, mais entregas fazem sentido dentro do pacote.</p>
+      <div class="section-tag">Planos de investimento</div>
+      <h2>Escolha o plano pelo tamanho da sua verba de mídia.</h2>
+      <p class="section-desc">O valor do serviço varia conforme o quanto você investe em anúncios por mês — quanto maior a verba, mais entregas fazem sentido dentro do plano.</p>
     </div>
 
     <div class="pacotes-grid">
       <div class="sticker reveal">
-        <div class="sticker-head">Pacote essencial</div>
+        <div class="sticker-head">Plano 1 · Inicial</div>
         <div class="sticker-body">
-          <div class="sticker-verba">Verba em anúncios: R$ 1.000 – R$ 2.500/mês</div>
+          <div class="sticker-verba-label">Indicado para</div>
+          <div class="sticker-verba-value">Quem está começando com tráfego pago</div>
           <div class="sticker-price">R$ 800<span>/mês, a partir de</span></div>
           <div class="sticker-divider"></div>
-          <div class="sticker-feat">Configuração e otimização Meta Ads</div>
-          <div class="sticker-feat">Público qualificado</div>
-          <div class="sticker-feat">Criativos + testes</div>
-          <div class="sticker-feat">Relatório semanal</div>
+          <div class="sticker-feat">Pode chegar a R$ 1.200 conforme o volume</div>
+          <div class="sticker-feat">Gestão completa de tráfego pago</div>
+          <div class="sticker-barcode"></div>
+        </div>
+        <div class="sticker-foot">Gestão de tráfego · New Click</div>
+      </div>
+
+      <div class="sticker reveal">
+        <div class="sticker-head">Plano 2 · Padrão</div>
+        <div class="sticker-body">
+          <div class="sticker-verba-label">Indicado para</div>
+          <div class="sticker-verba-value">Investimento em anúncios até R$ 2.500/mês</div>
+          <div class="sticker-price">R$ 1.000<span>/mês</span></div>
+          <div class="sticker-divider"></div>
+          <div class="sticker-feat">Gestão completa de tráfego pago</div>
+          <div class="sticker-feat">Otimização contínua da conta</div>
           <div class="sticker-barcode"></div>
         </div>
         <div class="sticker-foot">Gestão de tráfego · New Click</div>
@@ -476,30 +492,30 @@
 
       <div class="sticker featured reveal">
         <span class="badge-top">Mais escolhido</span>
-        <div class="sticker-head">Pacote crescimento</div>
+        <div class="sticker-head">Plano 3 · Crescimento</div>
         <div class="sticker-body">
-          <div class="sticker-verba">Verba em anúncios: a partir de R$ 1.500/mês</div>
-          <div class="sticker-price">R$ 1.000–1.200<span>/mês</span></div>
+          <div class="sticker-verba-label">Indicado para</div>
+          <div class="sticker-verba-value">Investimento em anúncios até R$ 5.000/mês</div>
+          <div class="sticker-price">R$ 1.500<span>/mês</span></div>
           <div class="sticker-divider"></div>
-          <div class="sticker-feat">Tudo do pacote essencial</div>
-          <div class="sticker-feat">Treinamento de vendas</div>
-          <div class="sticker-feat">Landing page própria</div>
-          <div class="sticker-feat">Criativos exclusivos</div>
+          <div class="sticker-feat">Tudo do plano padrão</div>
+          <div class="sticker-feat">Bônus: Treinamento de Vendas</div>
+          <div class="sticker-feat">Bônus: Landing Page</div>
+          <div class="sticker-feat">Bônus: Criativos</div>
           <div class="sticker-barcode"></div>
         </div>
         <div class="sticker-foot">Gestão de tráfego · New Click</div>
       </div>
 
       <div class="sticker reveal">
-        <div class="sticker-head">Pacote performance</div>
+        <div class="sticker-head">Plano 4 · Performance</div>
         <div class="sticker-body">
-          <div class="sticker-verba">Verba em anúncios: a partir de R$ 2.000/mês</div>
-          <div class="sticker-price">R$ 1.200<span>/mês</span></div>
+          <div class="sticker-verba-label">Indicado para</div>
+          <div class="sticker-verba-value">Investimento em anúncios até R$ 10.000/mês</div>
+          <div class="sticker-price">R$ 2.000<span>/mês</span></div>
           <div class="sticker-divider"></div>
-          <div class="sticker-feat">Tudo do pacote essencial</div>
-          <div class="sticker-feat">Acompanhamento da equipe de vendas</div>
-          <div class="sticker-feat">Rotina de gestão comercial</div>
-          <div class="sticker-feat">Prioridade nos ajustes diários</div>
+          <div class="sticker-feat">Tudo do plano crescimento</div>
+          <div class="sticker-feat">Bônus: Acompanhamento da equipe de vendas</div>
           <div class="sticker-barcode"></div>
         </div>
         <div class="sticker-foot">Gestão de tráfego · New Click</div>
@@ -586,7 +602,7 @@
     <div class="faq-list">
       <div class="faq-item reveal">
         <button class="faq-q">A verba de anúncio está incluída no valor do serviço? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Não. O valor do pacote é referente à gestão. A verba de mídia (o que é investido diretamente no Meta Ads) é paga à parte, direto na plataforma.</p></div>
+        <div class="faq-a"><p>Não. O valor do plano é referente à gestão. A verba de mídia (o que é investido diretamente no Meta Ads) é paga à parte, direto na plataforma.</p></div>
       </div>
       <div class="faq-item reveal">
         <button class="faq-q">Em quanto tempo aparecem os primeiros resultados? <span class="plus">+</span></button>
@@ -594,11 +610,11 @@
       </div>
       <div class="faq-item reveal">
         <button class="faq-q">Preciso ter uma equipe de vendas estruturada? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Não é obrigatório, mas ajuda bastante. Nos pacotes com treinamento e acompanhamento de equipe, trabalhamos junto pra que o lead gerado seja bem atendido até o test drive.</p></div>
+        <div class="faq-a"><p>Não é obrigatório, mas ajuda bastante. Nos planos com treinamento e acompanhamento de equipe, trabalhamos junto pra que o lead gerado seja bem atendido até o test drive.</p></div>
       </div>
       <div class="faq-item reveal">
         <button class="faq-q">Existe fidelidade ou contrato de longo prazo? <span class="plus">+</span></button>
-        <div class="faq-a"><p>O funcionamento e as condições de permanência são combinados diretamente na conversa inicial, conforme o pacote escolhido.</p></div>
+        <div class="faq-a"><p>O funcionamento e as condições de permanência são combinados diretamente na conversa inicial, conforme o plano escolhido.</p></div>
       </div>
       <div class="faq-item reveal">
         <button class="faq-q">Funciona para qualquer tipo de loja de veículos? <span class="plus">+</span></button>
